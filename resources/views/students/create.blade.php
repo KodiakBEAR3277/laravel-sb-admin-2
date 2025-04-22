@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('main-content')
-
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">{{ __('Add Student') }}</h1>
 
@@ -21,46 +20,246 @@
     @endif
 
     <div class="row">
-
-        <!-- Earnings (Monthly) Card Example -->
         <div class="col-md-12 mb-4">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <form method="POST" action="{{ route('students.store') }}">
                         @csrf
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="StudentNumber">Student Number</label>
+                                    <input type="text" class="form-control @error('StudentNumber') is-invalid @enderror" 
+                                           id="StudentNumber" name="StudentNumber" value="{{ old('StudentNumber') }}" required>
+                                    @error('StudentNumber')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Course">Course</label>
+                                    <input type="text" class="form-control @error('Course') is-invalid @enderror" 
+                                           id="Course" name="Course" value="{{ old('Course') }}" required>
+                                    @error('Course')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
 
-                        <div class="form-group">
-                            <label for="FirstName">{{ __('First Name') }}</label>
-                            <input type="text" class="form-control @error('FirstName') is-invalid @enderror" id="FirstName" name="FirstName" value="{{ old('FirstName') }}" required autocomplete="FirstName" autofocus>
-                            @error('FirstName')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="FirstName">First Name</label>
+                                    <input type="text" class="form-control @error('FirstName') is-invalid @enderror" 
+                                           id="FirstName" name="FirstName" value="{{ old('FirstName') }}" required>
+                                    @error('FirstName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="MiddleName">Middle Name</label>
+                                    <input type="text" class="form-control @error('MiddleName') is-invalid @enderror" 
+                                           id="MiddleName" name="MiddleName" value="{{ old('MiddleName') }}">
+                                    @error('MiddleName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="LastName">Last Name</label>
+                                    <input type="text" class="form-control @error('LastName') is-invalid @enderror" 
+                                           id="LastName" name="LastName" value="{{ old('LastName') }}" required>
+                                    @error('LastName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="FirstName">Last Name</label>
-                            <input type="text" class="form-control @error('LastName') is-invalid @enderror" id="LastName" name="LastName" value="{{ old('LastName') }}" required autocomplete="FirstName" autofocus>
-                            @error('LastName')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="YearLevel">Year Level</label>
+                                    <select class="form-control @error('YearLevel') is-invalid @enderror" 
+                                            id="YearLevel" name="YearLevel" required>
+                                        <option value="">Select Year Level</option>
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <option value="{{ $i }}" {{ old('YearLevel') == $i ? 'selected' : '' }}>
+                                                Year {{ $i }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    @error('YearLevel')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Section">Section</label>
+                                    <input type="text" class="form-control @error('Section') is-invalid @enderror" 
+                                           id="Section" name="Section" value="{{ old('Section') }}" required>
+                                    @error('Section')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="DateOfBirth">Date of Birth</label>
+                                    <input type="date" class="form-control @error('DateOfBirth') is-invalid @enderror" 
+                                           id="DateOfBirth" name="DateOfBirth" value="{{ old('DateOfBirth') }}" required>
+                                    @error('DateOfBirth')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="DateOfBirth">{{ __('Date Of Birth') }}</label>
-                            <input type="date" class="form-control @error('DateOfBirth') is-invalid @enderror" id="DateOfBirth" name="DateOfBirth" value="{{ old('DateOfBirth') }}" required autocomplete="FirstName" autofocus>
-                            @error('DateOfBirth')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Gender">Gender</label>
+                                    <select class="form-control @error('Gender') is-invalid @enderror" 
+                                            id="Gender" name="Gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male" {{ old('Gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                                        <option value="Female" {{ old('Gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                                        <option value="Other" {{ old('Gender') == 'Other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+                                    @error('Gender')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="AcademicStatus">Academic Status</label>
+                                    <select class="form-control @error('AcademicStatus') is-invalid @enderror" 
+                                            id="AcademicStatus" name="AcademicStatus" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Regular" {{ old('AcademicStatus') == 'Regular' ? 'selected' : '' }}>Regular</option>
+                                        <option value="Irregular" {{ old('AcademicStatus') == 'Irregular' ? 'selected' : '' }}>Irregular</option>
+                                        <option value="LOA" {{ old('AcademicStatus') == 'LOA' ? 'selected' : '' }}>LOA</option>
+                                        <option value="Graduated" {{ old('AcademicStatus') == 'Graduated' ? 'selected' : '' }}>Graduated</option>
+                                    </select>
+                                    @error('AcademicStatus')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Email">Email</label>
+                                    <input type="email" class="form-control @error('Email') is-invalid @enderror" 
+                                           id="Email" name="Email" value="{{ old('Email') }}">
+                                    @error('Email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-end">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="Address">Address</label>
+                                    <textarea class="form-control @error('Address') is-invalid @enderror" 
+                                              id="Address" name="Address" rows="2">{{ old('Address') }}</textarea>
+                                    @error('Address')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ContactNumber">Contact Number</label>
+                                    <input type="text" class="form-control @error('ContactNumber') is-invalid @enderror" 
+                                           id="ContactNumber" name="ContactNumber" value="{{ old('ContactNumber') }}">
+                                    @error('ContactNumber')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="EmergencyContact">Emergency Contact Person</label>
+                                    <input type="text" class="form-control @error('EmergencyContact') is-invalid @enderror" 
+                                           id="EmergencyContact" name="EmergencyContact" value="{{ old('EmergencyContact') }}">
+                                    @error('EmergencyContact')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="EmergencyContactNumber">Emergency Contact Number</label>
+                                    <input type="text" class="form-control @error('EmergencyContactNumber') is-invalid @enderror" 
+                                           id="EmergencyContactNumber" name="EmergencyContactNumber" 
+                                           value="{{ old('EmergencyContactNumber') }}">
+                                    @error('EmergencyContactNumber')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-primary">
-                                {{ __('Add') }}
+                                {{ __('Add Student') }}
                             </button>
                         </div>
+                    </form>
                 </div>
             </div>
         </div>

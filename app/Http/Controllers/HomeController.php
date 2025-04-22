@@ -24,11 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $users = User::count();
-
         $widget = [
-            'users' => $users,
-            //...
+            'users' => \App\Models\User::count(),
+            'students' => \App\Models\Students\Students::count(),
+            // Placeholder for teachers count until you implement the Teachers model
+            'teachers' => 0,
         ];
 
         return view('home', compact('widget'));
