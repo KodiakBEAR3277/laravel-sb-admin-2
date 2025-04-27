@@ -22,10 +22,26 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'StudentNumber' => 'required|unique:students',
+            'StudentNumber' => [
+                'required',
+                'unique:students',
+                'regex:/^\d{4}-\d{5}$/',  // Format: YYYY-XXXXX
+                function ($attribute, $value, $fail) {
+                    $year = substr($value, 0, 4);
+                    if ($year < 1900 || $year > date('Y')) {
+                        $fail('The year in student number must be valid.');
+                    }
+                },
+            ],
             'FirstName' => 'required|string|max:30',
             'LastName' => 'required|string|max:30',
             'MiddleName' => 'nullable|string|max:30',
+            'Password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/' // Optional: requires at least one letter and one number
+            ],
             'DateOfBirth' => 'required|date',
             'Course' => 'required|string|max:100',
             'YearLevel' => 'required|numeric|between:1,5',
@@ -33,9 +49,22 @@ class StudentController extends Controller
             'AcademicStatus' => 'required|in:Regular,Irregular,LOA,Graduated',
             'Gender' => 'required|in:Male,Female,Other',
             'Address' => 'nullable|string',
-            'ContactNumber' => 'nullable|string|max:20',
+            'TelephoneNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(\+63|0)[2-8]\d{7}$/' // Philippines landline format
+            ],
+            'ContactNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(09|\+639)\d{9}$/' // Philippines mobile number format
+            ],
             'EmergencyContact' => 'nullable|string|max:100',
-            'EmergencyContactNumber' => 'nullable|string|max:20',
+            'EmergencyContactNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(09|\+639)\d{9}$/' // Philippines mobile number format
+            ],
             'Email' => 'nullable|email|max:255'
         ]);
 
@@ -44,6 +73,7 @@ class StudentController extends Controller
         $student->FirstName = $request->FirstName;
         $student->LastName = $request->LastName;
         $student->MiddleName = $request->MiddleName;
+        $student->Password = bcrypt($request->Password); // Hash the password
         $student->DateOfBirth = $request->DateOfBirth;
         $student->Course = $request->Course;
         $student->YearLevel = $request->YearLevel;
@@ -51,6 +81,7 @@ class StudentController extends Controller
         $student->AcademicStatus = $request->AcademicStatus;
         $student->Gender = $request->Gender;
         $student->Address = $request->Address;
+        $student->TelephoneNumber = $request->TelephoneNumber;
         $student->ContactNumber = $request->ContactNumber;
         $student->EmergencyContact = $request->EmergencyContact;
         $student->EmergencyContactNumber = $request->EmergencyContactNumber;
@@ -74,10 +105,26 @@ class StudentController extends Controller
         $student = Students::findOrFail($request->id);
 
         $request->validate([
-            'StudentNumber' => 'required|unique:students,StudentNumber,'.$student->id,
+            'StudentNumber' => [
+                'required',
+                'regex:/^\d{4}-\d{5}$/',  // Format: YYYY-XXXXX
+                'unique:students,StudentNumber,'.$student->id,
+                function ($attribute, $value, $fail) {
+                    $year = substr($value, 0, 4);
+                    if ($year < 1900 || $year > date('Y')) {
+                        $fail('The year in student number must be valid.');
+                    }
+                },
+            ],
             'FirstName' => 'required|string|max:30',
             'LastName' => 'required|string|max:30',
             'MiddleName' => 'nullable|string|max:30',
+            'Password' => [
+                'nullable', // Make password optional during update
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/'
+            ],
             'DateOfBirth' => 'required|date',
             'Course' => 'required|string|max:100',
             'YearLevel' => 'required|numeric|between:1,5',
@@ -85,9 +132,22 @@ class StudentController extends Controller
             'AcademicStatus' => 'required|in:Regular,Irregular,LOA,Graduated',
             'Gender' => 'required|in:Male,Female,Other',
             'Address' => 'nullable|string',
-            'ContactNumber' => 'nullable|string|max:20',
+            'TelephoneNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(\+63|0)[2-8]\d{7}$/'
+            ],
+            'ContactNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(09|\+639)\d{9}$/'
+            ],
             'EmergencyContact' => 'nullable|string|max:100',
-            'EmergencyContactNumber' => 'nullable|string|max:20',
+            'EmergencyContactNumber' => [
+                'nullable',
+                'string',
+                'regex:/^(09|\+639)\d{9}$/'
+            ],
             'Email' => 'nullable|email|max:255'
         ]);
 
@@ -95,6 +155,9 @@ class StudentController extends Controller
         $student->FirstName = $request->FirstName;
         $student->LastName = $request->LastName;
         $student->MiddleName = $request->MiddleName;
+        if ($request->filled('Password')) {
+            $student->Password = bcrypt($request->Password);
+        }
         $student->DateOfBirth = $request->DateOfBirth;
         $student->Course = $request->Course;
         $student->YearLevel = $request->YearLevel;
@@ -102,6 +165,7 @@ class StudentController extends Controller
         $student->AcademicStatus = $request->AcademicStatus;
         $student->Gender = $request->Gender;
         $student->Address = $request->Address;
+        $student->TelephoneNumber = $request->TelephoneNumber;
         $student->ContactNumber = $request->ContactNumber;
         $student->EmergencyContact = $request->EmergencyContact;
         $student->EmergencyContactNumber = $request->EmergencyContactNumber;
@@ -115,21 +179,31 @@ class StudentController extends Controller
 
     public function destroy(Request $request)
     {
-        $StudentID = decrypt($request->segment(3));
-        $student = Students::findOrFail($StudentID);
-        $student->delete();
+        try {
+            $StudentID = decrypt($request->StudentID);
+            $student = Students::findOrFail($StudentID);
+            $student->delete();
 
-        return redirect()->route('students.index')
-            ->with('success', 'Student deleted successfully.');
+            return redirect()->route('students.index')
+                ->with('success', 'Student deleted successfully.');
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return redirect()->route('students.index')
+                ->with('error', 'Invalid student ID.');
+        }
     }
 
     public function restore(Request $request)
     {
-        $StudentID = decrypt($request->segment(3));
-        $student = Students::withTrashed()->findOrFail($StudentID);
-        $student->restore();
-        
-        return redirect()->route('students.index')
-            ->with('success', 'Student restored successfully.');
+        try {
+            $StudentID = decrypt($request->StudentID);
+            $student = Students::withTrashed()->findOrFail($StudentID);
+            $student->restore();
+            
+            return redirect()->route('students.index')
+                ->with('success', 'Student restored successfully.');
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return redirect()->route('students.index')
+                ->with('error', 'Invalid student ID.');
+        }
     }
 }

@@ -13,12 +13,6 @@
     </div>
     @endif
 
-    @if (session('status'))
-        <div class="alert alert-success border-left-success" role="alert">
-            {{ session('status') }}
-        </div>
-    @endif
-
     <div class="row">
         <div class="col-md-12 mb-4">
             <div class="card shadow-sm">
@@ -39,9 +33,9 @@
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('Course') }}</th>
                                     <th>{{ __('Year & Section') }}</th>
-                                    <th>{{ __('Gender') }}</th>
-                                    <th>{{ __('Academic Status') }}</th>
-                                    <th>{{ __('Contact Info') }}</th>
+                                    <th>{{ __('Contact Information') }}</th>
+                                    <th>{{ __('Academic Details') }}</th>
+                                    <th>{{ __('Emergency Contact') }}</th>
                                     <th>{{ __('Status') }}</th>
                                     <th>{{ __('Actions') }}</th>
                                 </tr>
@@ -51,12 +45,30 @@
                                 <tr>
                                     <td>{{ $student->StudentNumber }}</td>
                                     <td>
-                                        {{ $student->LastName }}, {{ $student->FirstName }} 
-                                        {{ $student->MiddleName ? $student->MiddleName[0].'.' : '' }}
+                                        <div>{{ $student->LastName }}, {{ $student->FirstName }} 
+                                            {{ $student->MiddleName ? $student->MiddleName[0].'.' : '' }}</div>
+                                        <small class="text-muted">{{ $student->Gender }}</small>
                                     </td>
                                     <td>{{ $student->Course }}</td>
-                                    <td>{{ $student->YearLevel }}-{{ $student->Section }}</td>
-                                    <td>{{ $student->Gender }}</td>
+                                    <td>
+                                        <div>Year {{ $student->YearLevel }}-{{ $student->Section }}</div>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            @if($student->TelephoneNumber)
+                                                <div><i class="fas fa-phone-alt"></i> {{ $student->TelephoneNumber }}</div>
+                                            @endif
+                                            @if($student->ContactNumber)
+                                                <div><i class="fas fa-mobile-alt"></i> {{ $student->ContactNumber }}</div>
+                                            @endif
+                                            @if($student->Email)
+                                                <div><i class="fas fa-envelope"></i> {{ $student->Email }}</div>
+                                            @endif
+                                            @if($student->Address)
+                                                <div><i class="fas fa-map-marker-alt"></i> {{ $student->Address }}</div>
+                                            @endif
+                                        </small>
+                                    </td>
                                     <td>
                                         @php
                                             $statusColors = [
@@ -73,11 +85,11 @@
                                     </td>
                                     <td>
                                         <small>
-                                            @if($student->ContactNumber)
-                                                <div><i class="fas fa-phone"></i> {{ $student->ContactNumber }}</div>
-                                            @endif
-                                            @if($student->Email)
-                                                <div><i class="fas fa-envelope"></i> {{ $student->Email }}</div>
+                                            @if($student->EmergencyContact)
+                                                <div>{{ $student->EmergencyContact }}</div>
+                                                @if($student->EmergencyContactNumber)
+                                                    <div><i class="fas fa-phone"></i> {{ $student->EmergencyContactNumber }}</div>
+                                                @endif
                                             @endif
                                         </small>
                                     </td>
@@ -91,18 +103,19 @@
                                     <td>
                                         @if($student->deleted_at)
                                             <a href="{{ route('students.restore', [encrypt($student->id)]) }}" 
-                                               class="btn btn-success btn-sm">
-                                                <i class="fas fa-undo"></i> Restore
+                                               class="btn btn-success btn-sm" title="Restore">
+                                                <i class="fas fa-undo"></i>
                                             </a>
                                         @else
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('students.edit', [encrypt($student->id)]) }}" 
-                                                   class="btn btn-warning btn-sm">
+                                                   class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="{{ route('students.destroy', [encrypt($student->id)]) }}" 
                                                    class="btn btn-danger btn-sm"
-                                                   onclick="return confirm('Are you sure you want to delete this student?')">
+                                                   onclick="return confirm('Are you sure you want to delete this student?')"
+                                                   title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
@@ -121,6 +134,11 @@
 
 @push('css')
 <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<style>
+    .table td small { font-size: 85%; }
+    .table td small div { margin-bottom: 2px; }
+    .table td { vertical-align: middle !important; }
+</style>
 @endpush
 
 @push('js')
@@ -128,7 +146,10 @@
 <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 <script>
     $(document).ready(function() {
-        $('#dataTable').DataTable();
+        $('#dataTable').DataTable({
+            "order": [[1, "asc"]], // Sort by name by default
+            "pageLength": 25 // Show 25 entries per page
+        });
     });
 </script>
 @endpush

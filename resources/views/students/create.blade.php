@@ -31,7 +31,12 @@
                                 <div class="form-group">
                                     <label for="StudentNumber">Student Number</label>
                                     <input type="text" class="form-control @error('StudentNumber') is-invalid @enderror" 
-                                           id="StudentNumber" name="StudentNumber" value="{{ old('StudentNumber') }}" required>
+                                           id="StudentNumber" name="StudentNumber" 
+                                           value="{{ old('StudentNumber', $student->StudentNumber ?? '') }}"
+                                           placeholder="YYYY-XXXXX" required>
+                                    <small class="form-text text-muted">
+                                        Format: Year (YYYY) followed by dash and 5 digits (e.g., 2022-00907)
+                                    </small>
                                     @error('StudentNumber')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -74,6 +79,22 @@
                                     <input type="text" class="form-control @error('MiddleName') is-invalid @enderror" 
                                            id="MiddleName" name="MiddleName" value="{{ old('MiddleName') }}">
                                     @error('MiddleName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Password">Password</label>
+                                    <input type="password" class="form-control @error('Password') is-invalid @enderror" 
+                                           id="Password" name="Password" required>
+                                    <small class="form-text text-muted">
+                                        Minimum 8 characters, must contain letters and numbers
+                                    </small>
+                                    @error('Password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -213,9 +234,34 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="ContactNumber">Contact Number</label>
+                                    <label for="TelephoneNumber">Telephone Number</label>
+                                    <input type="text" class="form-control @error('TelephoneNumber') is-invalid @enderror" 
+                                           id="TelephoneNumber" name="TelephoneNumber" 
+                                           value="{{ old('TelephoneNumber') }}" 
+                                           placeholder="e.g., 028xxxxxxx or +632xxxxxxx">
+                                    <small class="form-text text-muted">
+                                        Format: 02 or +632 followed by 7 digits
+                                    </small>
+                                    @error('TelephoneNumber')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ContactNumber">Mobile Number</label>
                                     <input type="text" class="form-control @error('ContactNumber') is-invalid @enderror" 
-                                           id="ContactNumber" name="ContactNumber" value="{{ old('ContactNumber') }}">
+                                           id="ContactNumber" name="ContactNumber" 
+                                           value="{{ old('ContactNumber') }}"
+                                           placeholder="09xxxxxxxxx">
+                                    <small class="form-text text-muted">
+                                        Format: 11 digits starting with 09
+                                    </small>
                                     @error('ContactNumber')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -244,7 +290,11 @@
                                     <label for="EmergencyContactNumber">Emergency Contact Number</label>
                                     <input type="text" class="form-control @error('EmergencyContactNumber') is-invalid @enderror" 
                                            id="EmergencyContactNumber" name="EmergencyContactNumber" 
-                                           value="{{ old('EmergencyContactNumber') }}">
+                                           value="{{ old('EmergencyContactNumber') }}"
+                                           placeholder="09xxxxxxxxx">
+                                    <small class="form-text text-muted">
+                                        Format: 11 digits starting with 09
+                                    </small>
                                     @error('EmergencyContactNumber')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -265,3 +315,15 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script>
+document.getElementById('StudentNumber').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/[^0-9]/g, '');
+    if (value.length > 4) {
+        value = value.substr(0, 4) + '-' + value.substr(4, 5);
+    }
+    e.target.value = value;
+});
+</script>
+@endpush
