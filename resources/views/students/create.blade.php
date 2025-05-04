@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="Password">Password</label>
                                     <input type="password" class="form-control @error('Password') is-invalid @enderror" 
@@ -100,7 +100,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <div class="col-md-4">
                                 <div class="form-group">

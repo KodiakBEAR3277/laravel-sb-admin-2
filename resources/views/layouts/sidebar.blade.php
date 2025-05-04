@@ -5,7 +5,7 @@
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-laugh-wink"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+            <div class="sidebar-brand-text mx-3">E<sup>lms</sup></div>
         </a>
 
         <!-- Divider -->
@@ -25,11 +25,14 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Classes:</h6>
+                        <a class="collapse-item">Add Class</a>
+                        <a class="collapse-item">Master list</a>
                         <h6 class="collapse-header">Students:</h6>
                         <a class="collapse-item" href="{{ route('students.create') }}">Add Student</a>
                         <a class="collapse-item" href="{{ route('students.index') }}">Master list</a>
                         <h6 class="collapse-header">Teachers:</h6>
-                        <a class="collapse-item" href="{{ route('students.create') }}"  >Add Teacher</a>
+                        <a class="collapse-item" href="{{ route('students.create') }}">Add Teacher</a>
                         <a class="collapse-item" href="{{ route('students.index') }}">Master list</a>
                     </div>
                 </div>
@@ -52,12 +55,12 @@
         </li>
 
         <!-- Nav Item - About -->
-        <li class="nav-item {{ Nav::isRoute('about') }}">
+        <!-- <li class="nav-item {{ Nav::isRoute('about') }}">
             <a class="nav-link" href="{{ route('about') }}">
                 <i class="fas fa-fw fa-hands-helping"></i>
                 <span>{{ __('About') }}</span>
             </a>
-        </li>
+        </li> -->
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
